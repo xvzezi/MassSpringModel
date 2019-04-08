@@ -8,6 +8,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "qxtexture.h"
 #include "qxshader.h"
+#include "qxcamera.h"
 #include <GLFW/glfw3.h>
 
 /**
@@ -34,6 +35,10 @@ public:
     GLenum DRAW_MODE = GL_STATIC_DRAW;
 
     glm::mat4 model_matrix;
+
+    bool using_bounding_box = false;
+    glm::vec3 box_origin;
+    float box_length = 0;
 
     QX_Object(std::string name,
             float* vertices, float* colors, float* coords,
@@ -179,6 +184,12 @@ public:
         return copy;
     }
 
+    void set_bounding_box(float x, float y, float z, float len)
+    {
+        box_origin = glm::vec3(x, y, z);
+        box_length = len;
+        using_bounding_box = true;
+    }
 
     void set_vertices(float* vertices, int v_amount = -1)
     {
@@ -310,6 +321,11 @@ public:
         glBindVertexArray(0);   // unbind
     }
 
+    virtual void mouse_select(int button){}
+    virtual void mouse_drag(int button, QX_Camera* camera, glm::vec3 mouse, glm::vec3 old, glm::vec3& out){}
+    virtual void mouse_release(int button){}
+
+    virtual bool intersect(glm::vec3 camera, glm::vec3 mouse, glm::vec3& out){return false;}
     //
     ~QX_Object()
     {

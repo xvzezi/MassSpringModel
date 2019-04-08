@@ -72,8 +72,9 @@ public:
 
         // call backs
         gui_render = nullptr;
-        input_pro = this->input_basic;
+        input_pro = nullptr;
         set_frame_buffer_size_cb(this->fbs_cb);
+
     }
 
     bool add_object(QX_Object* object)
@@ -183,6 +184,7 @@ public:
     void event_loop()
     {
         // process inputs
+        input_basic();
         if(input_pro)
             input_pro(main_window);
 
@@ -223,6 +225,11 @@ public:
         clear_data<QX_Object>(id_objects);
 
         // main window ignored
+    }
+
+    glm::vec4 get_viewport()
+    {
+        return glm::vec4(0, 0, width, height);
     }
 
 private:
@@ -268,15 +275,102 @@ private:
         glViewport(0, 0, width, height);
     }
 
-    static void input_basic(GLFWwindow* window)
+    void input_basic()
     {
-        if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-            glfwSetWindowShouldClose(window, true);
+        if(glfwGetKey(main_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+            glfwSetWindowShouldClose(main_window, true);
+        int mouse_state = glfwGetMouseButton(main_window, GLFW_MOUSE_BUTTON_LEFT);
+        if(mouse_state == GLFW_PRESS)
+            mouse_pressed(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS);
+        else if (mouse_state == GLFW_RELEASE)
+            mouse_released(GLFW_MOUSE_BUTTON_LEFT, GLFW_RELEASE);
     }
 
     static void error_cb(int error, const char* desc)
     {
         std::cerr << "GLFW::ERROR::" << error << "::" << desc;
+    }
+
+    // mouse state
+    bool mouse_left_held = false;
+    QX_Object* selected_object = nullptr;
+    glm::vec3 mouse_3d_last;
+
+    void print_vec3(glm::vec3& a, std::string name)
+    {
+        std::cout << name << ":\t";
+        std::cout << a.x << ' ' << a.y << ' '<< a.z << ' ' << std::endl;
+    }
+
+    void mouse_pressed(int button, int action)
+    {
+        if (button == GLFW_MOUSE_BUTTON_LEFT)
+        {
+            // get the current window position
+            double mouse_xpos, mouse_ypos;
+            mouse_pos(mouse_xpos, mouse_ypos);
+            glm::vec4 vp = get_viewport();
+            if(mouse_left_held) // its not the first time, so call the target objects' func
+            {
+                if(selected_object)
+                {
+                    // calculate the movement
+                    glm::vec3 mouse_3d, inter_pt;
+                    camera.unproject(mouse_xpos, mouse_ypos, 1.0, vp, mouse_3d);
+                    print_vec3(mouse_3d_last, "3d last");
+                    selected_object->mouse_drag(button, &camera, mouse_3d, mouse_3d_last, inter_pt);
+                    mouse_3d_last = inter_pt;
+                    print_vec3(mouse_3d_last, "3d this");
+                }
+            }
+            else    // the first time
+            {
+                mouse_left_held = true;
+                // try to calculate the mouse's 3d position
+                glm::vec3 mouse_3d, inter_pt;
+                camera.unproject(mouse_xpos, mouse_ypos, 1.0, vp, mouse_3d);
+                // try to iterate the objects and find if crossed
+                for(auto data : objects)
+                {
+                    if(data.second->enabled() &&
+                        data.second->intersect(camera.transform(), mouse_3d, inter_pt))
+                    {
+                        data.second->mouse_select(button);
+                        selected_object = data.second;
+                        print_vec3(inter_pt, "inter");
+                        break;
+                    }
+                }
+                // sth selected
+                if(selected_object)
+                {
+                    mouse_3d_last = inter_pt;
+                }
+            }
+        }
+    }
+
+    void mouse_released(int button, int action)
+    {
+        if (button == GLFW_MOUSE_BUTTON_LEFT)
+        {
+            if(mouse_left_held)
+            {
+                std::cout << "QX::WORLD::MOUSE::LEFT::RELEASE" << std::endl;
+                if(selected_object)
+                    selected_object->mouse_release(button);
+                mouse_left_held = false;
+                selected_object = nullptr;
+            }
+        }
+    }
+
+    void mouse_pos(double& xpos, double& ypos)
+    {
+        double x, y;
+        glfwGetCursorPos(main_window, &x, &y);
+        xpos = x;
+        ypos = height - y - 1;
     }
 
     // helper func

@@ -2,11 +2,14 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
+#include "MassSpringObject.h"
 #include "qx/qxheader.h"
-#include "Ballistic.h"
-//#include "Spring.h"
+
+#include "Eigen/Dense"
+
 
 using  namespace std;
+using Eigen::MatrixXd;
 
 // load all the data
 void load_shaders(QX_World& world)
@@ -72,6 +75,10 @@ void load_objects(QX_World& world)
     prim->render_draw_elements(true);
     prim->disable();
     world.add_object(prim);
+    MyObject* my = new MyObject("drag", prim);
+    my->set_bounding_box(0, 1, 0, 1);
+    my->enable();
+    world.add_object(my);
 }
 
 
@@ -80,16 +87,20 @@ int main() {
     load_shaders(world);
     load_textures(world);
     load_objects(world);
-    load_simulated_objects1(world);
-    gui_init(world);
-    world.render_gui(gui_render1);
+//    load_simulated_objects1(world);
+//    gui_init(world);
+//    world.render_gui(gui_render1);
+
+    MatrixXd m(2,2);
+    m << 3, 2.5, -1, 1.5;
+    cout << m << endl;
 
     while(!world.should_close())
     {
         world.event_loop();
     }
-    print_out(&world);
+//    print_out(&world);
     // clear the object
-    gui_clean(world);
+//    gui_clean(world);
     return 0;
 }
