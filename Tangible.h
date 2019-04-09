@@ -2,8 +2,8 @@
 // Created by xvzezi on 2019/4/7.
 //
 
-#ifndef MASSSPRINGMODEL_MASSSPRINGOBJECT_H
-#define MASSSPRINGMODEL_MASSSPRINGOBJECT_H
+#ifndef MASSSPRINGMODEL_TANGIBLE_H
+#define MASSSPRINGMODEL_TANGIBLE_H
 
 #include "qx/qxobject.h"
 
@@ -14,21 +14,18 @@ public:
     :QX_Object(name, prim)
     {}
 
+    void set_bounding_ball(float center_x, float center_y, float center_z, float radius)
+    {
+        this->set_bounding_box(center_x, center_y, center_z, radius);
+    }
+
     /********************************************
     * Usable Functions of mouse click
     ********************************************
     * */
     virtual void mouse_select_callback(int button){}
     virtual void mouse_release_callback(int button){}
-    virtual void mouse_drag_callback(int button, float dx_3d, float dy_3d, float dz_3d)
-    {
-
-        x += dx_3d;
-        y += dy_3d;
-        z += dz_3d;
-        this->identity()->translate(x, y, z);
-        // std::cout << x << ' ' << y << ' '<< z << std::endl;
-    }
+    virtual void mouse_drag_callback(int button, float dx_3d, float dy_3d, float dz_3d){}
 
 
     /********************************************
@@ -65,10 +62,11 @@ public:
     }
     bool intersect(glm::vec3 camera, glm::vec3 mouse, glm::vec3& out)final
     {
+        bounding_box_update();
         // process as a ball
         glm::vec3 dir = mouse - camera;
         dir = glm::normalize(dir);
-        glm::vec3 bb_origin = model_matrix * glm::vec4(box_origin, 1);  // the new origin point
+        glm::vec3 bb_origin = box_cur_origin;  // the new origin point
         float surface_const = glm::dot(bb_origin, dir);
         float diss = glm::dot(camera, dir);
         float t = surface_const - diss;
@@ -77,10 +75,7 @@ public:
         float distance = glm::length(dis);
 
         // try to calculate the intersection
-        glm::vec3 bb0 = box_origin;
-        bb0.x += box_length;
-        bb0 = model_matrix * glm::vec4(bb0, 1);
-        float real_len = glm::length(bb0 - bb_origin);
+        float real_len = box_cur_length;
 
         out = inter;
 
@@ -88,9 +83,6 @@ public:
     }
 
 private:
-    float x = 0;
-    float y = 0;
-    float z = 0;
 };
 
 /*
@@ -108,4 +100,4 @@ private:
 
  */
 
-#endif //MASSSPRINGMODEL_MASSSPRINGOBJECT_H
+#endif //MASSSPRINGMODEL_TANGIBLE_H

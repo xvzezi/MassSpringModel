@@ -12,10 +12,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a6a12f35-fa84-43de-b042-a43e207742c0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/MassSpringObject.h" beforeDir="false" afterPath="$PROJECT_DIR$/MassSpringObject.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MSNetwork.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MSNetwork.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MassSpringObject.h" beforeDir="false" afterPath="$PROJECT_DIR$/Tangible.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/qx/qxobject.h" beforeDir="false" afterPath="$PROJECT_DIR$/qx/qxobject.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/qx/qxworld.h" beforeDir="false" afterPath="$PROJECT_DIR$/qx/qxworld.h" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -33,15 +36,31 @@
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/MassSpringObject.h">
+            <entry file="file://$PROJECT_DIR$/MSNetwork.h">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="272">
-                  <caret line="29" column="11" selection-start-line="29" selection-start-column="11" selection-end-line="29" selection-end-column="11" />
+                <state relative-caret-position="323">
+                  <caret line="85" column="27" selection-start-line="85" selection-start-column="27" selection-end-line="85" selection-end-column="27" />
                   <folding>
-                    <element signature="e#430#727#0" />
-                    <element signature="e#436#1180#0" />
-                    <element signature="e#1185#1331#0" />
-                    <element signature="e#1337#2157#0" />
+                    <element signature="e#114#138#0" expanded="true" />
+                    <element signature="e#298#478#0" />
+                    <element signature="e#638#690#0" />
+                    <element signature="e#740#778#0" />
+                    <element signature="e#641#723#0" />
+                    <element signature="e#740#800#0" />
+                    <element signature="e#1822#1901#0" />
+                    <element signature="e#2233#2292#0" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/MSNetwork.cpp">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="589">
+                  <caret line="31" column="24" selection-start-line="31" selection-start-column="24" selection-end-line="31" selection-end-column="24" />
+                  <folding>
+                    <element signature="e#40#58#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -50,8 +69,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/main.cpp">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="521">
-                  <caret line="82" selection-start-line="82" selection-end-line="82" />
+                <state relative-caret-position="1490">
+                  <caret line="80" column="30" selection-start-line="80" selection-start-column="30" selection-end-line="80" selection-end-column="30" />
                   <folding>
                     <element signature="e#0#24#0" expanded="true" />
                   </folding>
@@ -63,11 +82,33 @@
       </split-first>
       <split-second>
         <leaf>
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/qx/qxworld.h">
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Tangible.h">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="366">
-                  <caret line="361" column="42" lean-forward="true" selection-start-line="361" selection-start-column="42" selection-end-line="361" selection-end-column="42" />
+                <state relative-caret-position="479">
+                  <caret line="68" column="53" selection-start-line="68" selection-start-column="53" selection-end-line="68" selection-end-column="53" />
+                  <folding>
+                    <element signature="e#614#903#0" />
+                    <element signature="e#908#1568#0" />
+                    <element signature="e#1573#1718#0" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/qx/qxobject.h">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="3241">
+                  <caret line="388" column="9" selection-start-line="388" selection-start-column="9" selection-end-line="388" selection-end-column="9" />
+                  <folding>
+                    <element signature="e#0#2#0" />
+                    <element signature="e#3037#4894#0" />
+                    <element signature="e#4900#6964#0" />
+                    <element signature="e#6970#7143#0" />
+                    <element signature="e#9482#9784#0" />
+                    <element signature="e#10991#11023#0" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -90,10 +131,13 @@
       <list>
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/qx/qxcamera.h" />
-        <option value="$PROJECT_DIR$/main.cpp" />
-        <option value="$PROJECT_DIR$/qx/qxobject.h" />
         <option value="$PROJECT_DIR$/qx/qxworld.h" />
         <option value="$PROJECT_DIR$/MassSpringObject.h" />
+        <option value="$PROJECT_DIR$/Tangible.h" />
+        <option value="$PROJECT_DIR$/main.cpp" />
+        <option value="$PROJECT_DIR$/MSNetwork.cpp" />
+        <option value="$PROJECT_DIR$/qx/qxobject.h" />
+        <option value="$PROJECT_DIR$/MSNetwork.h" />
       </list>
     </option>
   </component>
@@ -113,16 +157,6 @@
             <path>
               <item name="MassSpringModel" type="b2602c69:ProjectViewProjectNode" />
               <item name="MassSpringModel" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MassSpringModel" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MassSpringModel" type="462c0819:PsiDirectoryNode" />
-              <item name="qx" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MassSpringModel" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MassSpringModel" type="462c0819:PsiDirectoryNode" />
-              <item name="shader" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -233,45 +267,83 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/qx/qxobject.h">
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/qx/qxworld.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="496">
-          <caret line="325" column="44" selection-start-line="325" selection-start-column="44" selection-end-line="325" selection-end-column="44" />
+        <state relative-caret-position="708">
+          <caret line="361" column="42" lean-forward="true" selection-start-line="361" selection-start-column="42" selection-end-line="361" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../global/include/glad/glad.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="1115" column="8" selection-start-line="1115" selection-start-column="8" selection-end-line="1115" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tangible.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="479">
+          <caret line="68" column="53" selection-start-line="68" selection-start-column="53" selection-end-line="68" selection-end-column="53" />
           <folding>
-            <element signature="e#0#2#0" />
+            <element signature="e#614#903#0" />
+            <element signature="e#908#1568#0" />
+            <element signature="e#1573#1718#0" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="521">
-          <caret line="82" selection-start-line="82" selection-end-line="82" />
+        <state relative-caret-position="1490">
+          <caret line="80" column="30" selection-start-line="80" selection-start-column="30" selection-end-line="80" selection-end-column="30" />
           <folding>
             <element signature="e#0#24#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/qx/qxworld.h">
+    <entry file="file://$PROJECT_DIR$/MSNetwork.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="366">
-          <caret line="361" column="42" lean-forward="true" selection-start-line="361" selection-start-column="42" selection-end-line="361" selection-end-column="42" />
+        <state relative-caret-position="589">
+          <caret line="31" column="24" selection-start-line="31" selection-start-column="24" selection-end-line="31" selection-end-column="24" />
+          <folding>
+            <element signature="e#40#58#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MassSpringObject.h">
+    <entry file="file://$PROJECT_DIR$/qx/qxobject.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="29" column="11" selection-start-line="29" selection-start-column="11" selection-end-line="29" selection-end-column="11" />
+        <state relative-caret-position="3241">
+          <caret line="388" column="9" selection-start-line="388" selection-start-column="9" selection-end-line="388" selection-end-column="9" />
           <folding>
-            <element signature="e#430#727#0" />
-            <element signature="e#436#1180#0" />
-            <element signature="e#1185#1331#0" />
-            <element signature="e#1337#2157#0" />
+            <element signature="e#0#2#0" />
+            <element signature="e#3037#4894#0" />
+            <element signature="e#4900#6964#0" />
+            <element signature="e#6970#7143#0" />
+            <element signature="e#9482#9784#0" />
+            <element signature="e#10991#11023#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MSNetwork.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="85" column="27" selection-start-line="85" selection-start-column="27" selection-end-line="85" selection-end-column="27" />
+          <folding>
+            <element signature="e#114#138#0" expanded="true" />
+            <element signature="e#298#478#0" />
+            <element signature="e#638#690#0" />
+            <element signature="e#740#778#0" />
+            <element signature="e#641#723#0" />
+            <element signature="e#740#800#0" />
+            <element signature="e#1822#1901#0" />
+            <element signature="e#2233#2292#0" />
           </folding>
         </state>
       </provider>

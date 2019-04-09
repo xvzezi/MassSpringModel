@@ -39,55 +39,15 @@ public:
     bool using_bounding_box = false;
     glm::vec3 box_origin;
     float box_length = 0;
+    glm::vec3 box_cur_origin;
+    float box_cur_length = 0;
 
     QX_Object(std::string name,
             float* vertices, float* colors, float* coords,
             int v_amount, GLenum draw_mode = GL_STATIC_DRAW,
             unsigned int* elements = nullptr, int e_amount = 0)
     {
-        // pre process
-        this->name = name;
-        model_matrix = glm::mat4(1.0f);
-
-        if(v_amount < 0) v_amount = 0;
-        point_amount = v_amount;
-        this->DRAW_MODE = draw_mode;
-
-        if(e_amount < 0) e_amount = 0;
-        element_amount = e_amount;
-
-        // try to load from the data
-        // the arrangement is :
-        //  - x, y, z, r, g, b, t_s, t_t
-        raw_data = new float[point_amount * unit_len];
-        raw_element = new unsigned int[element_amount];
-        set_vertices(vertices);
-        set_colors_rgb(colors);
-        if(coords)
-            set_tex_coords(coords);
-        set_elements(elements);
-
-
-        // set the openGL settings
-        glGenBuffers(1, &VB_ID);
-        glGenBuffers(1, &EB_ID);
-        glGenVertexArrays(1, &VA_ID);
-        glBindVertexArray(VA_ID);
-        // copy the vertices buffer
-        glBindBuffer(GL_ARRAY_BUFFER, VB_ID);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * point_amount * unit_len, raw_data, DRAW_MODE);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EB_ID);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * element_amount, raw_element, DRAW_MODE);
-        // set the pointer attribute
-        // location
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, unit_len*sizeof(float), (void*)(loc_offset * sizeof(float)));
-        glEnableVertexAttribArray(0);
-        // color
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, unit_len*sizeof(float), (void*)(col_offset * sizeof(float)));
-        glEnableVertexAttribArray(1);
-        // Text
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, unit_len*sizeof(float), (void*)(tex_offset * sizeof(float)));
-        glEnableVertexAttribArray(2);
+        init(name, vertices, colors, coords, v_amount, draw_mode, elements, e_amount);
     }
 
     QX_Object(std::string name, const QX_Object* tar)
@@ -188,12 +148,17 @@ public:
     {
         box_origin = glm::vec3(x, y, z);
         box_length = len;
+        box_cur_length = box_length;
+        box_cur_origin = box_origin;
         using_bounding_box = true;
     }
 
     void set_vertices(float* vertices, int v_amount = -1)
     {
         set_data(vertices, v_amount, loc_offset, 3);
+        glBindVertexArray(VA_ID);
+        glBindBuffer(GL_ARRAY_BUFFER, VB_ID);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * point_amount * unit_len, raw_data);
     }
 
     void set_colors_rgb(float* colors, int v_amount = -1)
@@ -294,7 +259,7 @@ public:
         return !disabled;
     }
 
-    virtual void render(glm::mat4& global_matrix)
+    virtual void render(glm::mat4& global_matrix, GLenum draw_type = GL_TRIANGLES)
     {
         if(disabled) return;
         // prepare
@@ -315,9 +280,9 @@ public:
         // draw
         glBindVertexArray(VA_ID);
         if(draw_elements)
-            glDrawElements(GL_TRIANGLES, element_amount, GL_UNSIGNED_INT, 0);
+            glDrawElements(draw_type, element_amount, GL_UNSIGNED_INT, 0);
         else
-            glDrawArrays(GL_TRIANGLES, 0, point_amount);
+            glDrawArrays(draw_type, 0, point_amount);
         glBindVertexArray(0);   // unbind
     }
 
@@ -330,9 +295,69 @@ public:
     {
         if(raw_data) delete[] raw_data;
         if(raw_element) delete[] raw_element;
+        // glDeleteBuffers()
+    }
+
+    void bounding_box_update()
+    {
+        box_cur_origin = model_matrix * glm::vec4(box_origin, 1);  // the new origin point
+        glm::vec3 bb0 = box_origin;
+        bb0.x += box_length;
+        bb0 = model_matrix * glm::vec4(bb0, 1);
+        box_cur_length = glm::length(bb0 - box_cur_origin);
+    }
+protected:
+    QX_Object(){}
+    void init(std::string name,
+              float* vertices, float* colors, float* coords,
+              int v_amount, GLenum draw_mode = GL_STATIC_DRAW,
+              unsigned int* elements = nullptr, int e_amount = 0)
+    {
+        // pre process
+        this->name = name;
+        model_matrix = glm::mat4(1.0f);
+
+        if(v_amount < 0) v_amount = 0;
+        point_amount = v_amount;
+        this->DRAW_MODE = draw_mode;
+
+        if(e_amount < 0) e_amount = 0;
+        element_amount = e_amount;
+
+        // try to load from the data
+        // the arrangement is :
+        //  - x, y, z, r, g, b, t_s, t_t
+        raw_data = new float[point_amount * unit_len];
+        raw_element = new unsigned int[element_amount];
+        set_vertices(vertices);
+        set_colors_rgb(colors);
+        if(coords)
+            set_tex_coords(coords);
+        set_elements(elements);
+
+
+        // set the openGL settings
+        glGenBuffers(1, &VB_ID);
+        glGenBuffers(1, &EB_ID);
+        glGenVertexArrays(1, &VA_ID);
+        glBindVertexArray(VA_ID);
+        // copy the vertices buffer
+        glBindBuffer(GL_ARRAY_BUFFER, VB_ID);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * point_amount * unit_len, raw_data, DRAW_MODE);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EB_ID);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * element_amount, raw_element, DRAW_MODE);
+        // set the pointer attribute
+        // location
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, unit_len*sizeof(float), (void*)(loc_offset * sizeof(float)));
+        glEnableVertexAttribArray(0);
+        // color
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, unit_len*sizeof(float), (void*)(col_offset * sizeof(float)));
+        glEnableVertexAttribArray(1);
+        // Text
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, unit_len*sizeof(float), (void*)(tex_offset * sizeof(float)));
+        glEnableVertexAttribArray(2);
     }
 private:
-    QX_Object(){}
     //
     int point_amount = 0;
     float* raw_data = nullptr;

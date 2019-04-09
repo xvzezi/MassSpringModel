@@ -2,8 +2,8 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-#include "MassSpringObject.h"
 #include "qx/qxheader.h"
+#include "MSNetwork.h"
 
 #include "Eigen/Dense"
 
@@ -21,7 +21,7 @@ void load_textures(QX_World& world)
 {
     world.add_texture(new QX_Texture("tex0", "../resources/container.jpg"));
 }
-
+MS_Network* net;
 void load_objects(QX_World& world)
 {
     // -- // data preparation
@@ -75,10 +75,10 @@ void load_objects(QX_World& world)
     prim->render_draw_elements(true);
     prim->disable();
     world.add_object(prim);
-    Tangible* my = new Tangible("drag", prim);
-    my->set_bounding_box(0, 1, 0, 1);
-    my->enable();
-    world.add_object(my);
+//    MassPoint* my = new MassPoint("drag", prim, 0, 1, 0, 1);
+//    my->enable();
+//    world.add_object(my);
+    net = new MS_Network(4, 10, prim, &world);
 }
 
 
