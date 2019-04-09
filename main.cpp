@@ -75,7 +75,7 @@ void load_objects(QX_World& world)
     prim->render_draw_elements(true);
     prim->disable();
     world.add_object(prim);
-    MyObject* my = new MyObject("drag", prim);
+    Tangible* my = new Tangible("drag", prim);
     my->set_bounding_box(0, 1, 0, 1);
     my->enable();
     world.add_object(my);

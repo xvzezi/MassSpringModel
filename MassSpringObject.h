@@ -7,20 +7,40 @@
 
 #include "qx/qxobject.h"
 
-class MyObject : public QX_Object
+class Tangible : public QX_Object
 {
 public:
-    MyObject(std::string name, QX_Object* prim)
+    Tangible(std::string name, QX_Object* prim)
     :QX_Object(name, prim)
     {}
 
-
-    void mouse_select(int button)
+    /********************************************
+    * Usable Functions of mouse click
+    ********************************************
+    * */
+    virtual void mouse_select_callback(int button){}
+    virtual void mouse_release_callback(int button){}
+    virtual void mouse_drag_callback(int button, float dx_3d, float dy_3d, float dz_3d)
     {
-        std::cout << "selected" << std::endl;
-        // try to init all the things that should be done
+
+        x += dx_3d;
+        y += dy_3d;
+        z += dz_3d;
+        this->identity()->translate(x, y, z);
+        // std::cout << x << ' ' << y << ' '<< z << std::endl;
     }
-    void mouse_drag(int button, QX_Camera* camera, glm::vec3 mouse, glm::vec3 old, glm::vec3& out)
+
+
+    /********************************************
+     * Helper Funcs of mouse click
+     ********************************************
+     * */
+    void mouse_select(int button) final
+    {
+        // try to init all the things that should be done
+        mouse_select_callback(button);
+    }
+    void mouse_drag(int button, QX_Camera* camera, glm::vec3 mouse, glm::vec3 old, glm::vec3& out)final
     {
         glm::vec3 dir = camera->dir();
         dir = glm::normalize(dir);
@@ -35,19 +55,15 @@ public:
         out = inter;
 
         glm::vec3 delta = inter - old;
-        x += delta.x;
-        y += delta.y;
-//        z += delta.z;
-        this->identity()->translate(x, y, 0);
-        std::cout << x << ' ' << y << ' '<< z << std::endl;
+        // call back
+        mouse_drag_callback(button, delta.x, delta.y, delta.z);
     }
-    void mouse_release(int button)
+    void mouse_release(int button)final
     {
-        std::cout << "released" << std::endl;
         // try to init all the things that should be done
+        mouse_release_callback(button);
     }
-
-    bool intersect(glm::vec3 camera, glm::vec3 mouse, glm::vec3& out)
+    bool intersect(glm::vec3 camera, glm::vec3 mouse, glm::vec3& out)final
     {
         // process as a ball
         glm::vec3 dir = mouse - camera;

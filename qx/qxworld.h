@@ -317,10 +317,10 @@ private:
                     // calculate the movement
                     glm::vec3 mouse_3d, inter_pt;
                     camera.unproject(mouse_xpos, mouse_ypos, 1.0, vp, mouse_3d);
-                    print_vec3(mouse_3d_last, "3d last");
+                    // print_vec3(mouse_3d_last, "3d last");
                     selected_object->mouse_drag(button, &camera, mouse_3d, mouse_3d_last, inter_pt);
                     mouse_3d_last = inter_pt;
-                    print_vec3(mouse_3d_last, "3d this");
+                    // print_vec3(mouse_3d_last, "3d this");
                 }
             }
             else    // the first time
@@ -337,7 +337,8 @@ private:
                     {
                         data.second->mouse_select(button);
                         selected_object = data.second;
-                        print_vec3(inter_pt, "inter");
+                        // print_vec3(inter_pt, "inter");
+                        std::cout << "QX::WORLD::MOUSE::LEFT::SELECT::name " << selected_object->name << std::endl;
                         break;
                     }
                 }
@@ -356,9 +357,11 @@ private:
         {
             if(mouse_left_held)
             {
-                std::cout << "QX::WORLD::MOUSE::LEFT::RELEASE" << std::endl;
                 if(selected_object)
+                {
+                    std::cout << "QX::WORLD::MOUSE::LEFT::RELEASE::name " << selected_object->name << std::endl;
                     selected_object->mouse_release(button);
+                }
                 mouse_left_held = false;
                 selected_object = nullptr;
             }

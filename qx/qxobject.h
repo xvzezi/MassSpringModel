@@ -324,7 +324,6 @@ public:
     virtual void mouse_select(int button){}
     virtual void mouse_drag(int button, QX_Camera* camera, glm::vec3 mouse, glm::vec3 old, glm::vec3& out){}
     virtual void mouse_release(int button){}
-
     virtual bool intersect(glm::vec3 camera, glm::vec3 mouse, glm::vec3& out){return false;}
     //
     ~QX_Object()
