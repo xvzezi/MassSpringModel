@@ -78,7 +78,7 @@ void load_objects(QX_World& world)
 //    MassPoint* my = new MassPoint("drag", prim, 0, 1, 0, 1);
 //    my->enable();
 //    world.add_object(my);
-    net = new MS_Network(4, 10, prim, &world);
+    net = new MS_Network(10, 20, prim, &world);
 }
 
 

@@ -56,7 +56,11 @@ public:
     /** Render */
     void render(glm::mat4& global_matrix, GLenum draw_type = GL_TRIANGLES)
     {
-        this->identity()->translate(x, y, 0)->scale(0.5, 0.5, 0.5);
+        if(sticky)
+            this->identity()->translate(x, y, 0)->scale(0.5, 0.5, 0.5);
+        else
+            this->identity()->translate(x, y, 0)->scale(0.2, 0.2, 0.2);
+
         Tangible::render(global_matrix, draw_type);
     }
 
