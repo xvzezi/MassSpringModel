@@ -3,13 +3,9 @@
 #include "imgui/imgui_impl_opengl3.h"
 
 #include "qx/qxheader.h"
-#include "MSNetwork.h"
-
-#include "Eigen/Dense"
-
+#include "MS_UI.h"
 
 using  namespace std;
-using Eigen::MatrixXd;
 
 // load all the data
 void load_shaders(QX_World& world)
@@ -21,7 +17,6 @@ void load_textures(QX_World& world)
 {
     world.add_texture(new QX_Texture("tex0", "../resources/container.jpg"));
 }
-MS_Network* net;
 void load_objects(QX_World& world)
 {
     // -- // data preparation
@@ -56,6 +51,7 @@ void load_objects(QX_World& world)
     QX_Object* yline = xline->duplicate("yline");
     yline->scale(1, 1, 0.02)->rotate(glm::radians(90.0f), 0, 0, 1);
     world.add_object(yline);
+    world.remove_object(plane->name);
 
     // a cube prim
     float cube_vs[] = {
@@ -75,25 +71,17 @@ void load_objects(QX_World& world)
     prim->render_draw_elements(true);
     prim->disable();
     world.add_object(prim);
-//    MassPoint* my = new MassPoint("drag", prim, 0, 1, 0, 1);
-//    my->enable();
-//    world.add_object(my);
-    net = new MS_Network(10, 20, prim, &world);
 }
 
-
+extern MS_Network* net;
 int main() {
     QX_World world("CA HW2 SIM Spring Motion", 1600, 800);
     load_shaders(world);
     load_textures(world);
     load_objects(world);
-//    load_simulated_objects1(world);
-//    gui_init(world);
-//    world.render_gui(gui_render1);
-
-    MatrixXd m(2,2);
-    m << 3, 2.5, -1, 1.5;
-    cout << m << endl;
+    load_simulated_objects1(world);
+    gui_init(world);
+    world.render_gui(gui_render1);
 
     while(!world.should_close())
     {
@@ -101,6 +89,6 @@ int main() {
     }
 //    print_out(&world);
     // clear the object
-//    gui_clean(world);
+    gui_clean(world);
     return 0;
 }

@@ -150,8 +150,9 @@ public:
         QX_Object* tar = get_object(name);
         if(tar)
         {
-            remove<std::string, QX_Object>(objects, tar->name);
-            remove<unsigned int, QX_Object>(id_objects, tar->VA_ID);
+            objects.erase(tar->name);
+            id_objects.erase(tar->VA_ID);
+            delete tar;
         }
     }
 
@@ -160,8 +161,9 @@ public:
         QX_Object* tar = get_object(id);
         if(tar)
         {
-            remove<std::string, QX_Object>(objects, tar->name);
-            remove<unsigned int, QX_Object>(id_objects, tar->VA_ID);
+            objects.erase(tar->name);
+            id_objects.erase(tar->VA_ID);
+            delete tar;
         }
     }
 
@@ -266,7 +268,6 @@ private:
                 iter->second->render(camera.matrix());
             }
         }
-
     }
 
     // cb_func

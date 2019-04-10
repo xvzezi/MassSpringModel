@@ -6,7 +6,7 @@
 
 /**************************************************************************/
 /*       Network       */
-void MS_Network::generateNetwork(int rows, int cols, QX_Object *prim, QX_World* world) {
+void MS_Network::generateNetwork(int rows, int cols, float rest_len, float mass, QX_Object *prim, QX_World* world) {
     prim->enable();
     std::stringstream ss;
     static float width = 100;
@@ -22,7 +22,7 @@ void MS_Network::generateNetwork(int rows, int cols, QX_Object *prim, QX_World* 
         for (int col = 0; col < cols; col++)
         {
             ss << row << ',' << col;
-            MassPoint* mp = new MassPoint("n"+ss.str(), prim, 0, 1, 0, 1);
+            MassPoint* mp = new MassPoint("n"+ss.str(), mass, prim, 0, 1, 0, 1);
             mp->x = cur_x; mp->y = cur_y;
             world->add_object(mp);
             ss.str("");
@@ -33,18 +33,22 @@ void MS_Network::generateNetwork(int rows, int cols, QX_Object *prim, QX_World* 
         cur_x = st_x;
     }
     // add spring
+    ss.clear();
+    ss.str("");
     for(int row = 0; row < rows - 1; row++)
     {
         for (int col = 0; col < cols - 1; col++)
         {
             ss << springs.size();
             // first
-            Spring* sp = new Spring("s"+ss.str());
+            Spring* sp = new Spring("s"+ss.str(), rest_len);
             sp->connect_left_right(points[row][col], points[row][col+1]);
             world->add_object(sp);
             springs.push_back(sp);
+            ss.str("");
             // second
-            sp = new Spring("s"+ss.str());
+            ss << springs.size();
+            sp = new Spring("s"+ss.str(), rest_len);
             sp->connect_up_down(points[row][col], points[row+1][col]);
             world->add_object(sp);
             springs.push_back(sp);
@@ -55,7 +59,7 @@ void MS_Network::generateNetwork(int rows, int cols, QX_Object *prim, QX_World* 
     for (int col = 0; col < cols - 1; col++)
     {
         ss << springs.size();
-        Spring* sp = new Spring("s"+ss.str());
+        Spring* sp = new Spring("s"+ss.str(), rest_len);
         sp->connect_left_right(points[row][col], points[row][col+1]);
         world->add_object(sp);
         springs.push_back(sp);
@@ -65,7 +69,7 @@ void MS_Network::generateNetwork(int rows, int cols, QX_Object *prim, QX_World* 
     for (int row = 0; row < rows - 1; row++)
     {
         ss << springs.size();
-        Spring* sp = new Spring("s" + ss.str());
+        Spring* sp = new Spring("s" + ss.str(), rest_len);
         sp->connect_up_down(points[row][col], points[row+1][col]);
         world->add_object(sp);
         springs.push_back(sp);
@@ -93,24 +97,4 @@ void MS_Network::setNetwork(QX_World* world)
         s->ref_shader(world->get_shader("basic"));
     }
 };
-
-/**************************************************************************/
-/*       Mass Point       */
-void MassPoint::mouse_drag_callback(int button, float dx, float dy, float dz)
-{
-    if(sticky)
-        return;
-    float old_x = x, old_y = y;
-    x += dx;
-    y += dy;
-    for(Spring* s : springs)
-    {
-        if(s->check_collision())
-        {
-            x = old_x;
-            y = old_y;
-            break;
-        }
-    }
-}
 

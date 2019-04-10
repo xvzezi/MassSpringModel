@@ -8,3 +8,7 @@
 1. GLFW *with* GLAD
 2. GLM
 3.  dear imgui, v1.70 WIP
+
+
+## Problem
+1. std::map 在某些情况下删除迭代器会删除失败
