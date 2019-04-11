@@ -49,7 +49,7 @@ int cols = 10;
 float rest_len = 10;
 float mass = 1;
 float gravity = 10;
-float spring_k = 500;
+float spring_k = 20;
 float damping_d = 0;
 int mode = 0;
 
@@ -111,14 +111,14 @@ void matrix_settings(QX_World* world)
 //            go_next = true;
 //            timer = glfwGetTime();
 //        }
-        net->solve_next(0, glfwGetTime() - timer);
+        net->solve_next(mode, glfwGetTime() - timer);
         timer = glfwGetTime();
     }
     if(go_next)
     {
         // recalculate the 3 objects
         std::cout << "Next Framed called" << std::endl;
-        net->solve_next(0, time_step);
+        net->solve_next(mode, time_step);
         //
         go_next = false;
     }
@@ -133,7 +133,7 @@ void gui_render1(QX_World* world)
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-     ImGui::ShowDemoWindow();
+//     ImGui::ShowDemoWindow();
     // gui design
     {
         // titles
@@ -183,6 +183,7 @@ void gui_render1(QX_World* world)
         }
         else
         {
+            ImGui::SliderFloat("Time Step(s)", &time_step, 0.005, 0.5);
             ImGui::RadioButton("Implicit", &mode, 0);
             ImGui::RadioButton("Explicit", &mode, 1);
             ImGui::RadioButton("Combine", &mode, 2);

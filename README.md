@@ -13,3 +13,6 @@
 
 ## Problem
 1. std::map 在某些情况下删除迭代器会删除失败
+
+## New Feature
+1. *class* Tangible: will response to mouse interactions

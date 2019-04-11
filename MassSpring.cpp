@@ -8,8 +8,6 @@
 /*       Mass Point       */
 void MassPoint::mouse_drag_callback(int button, float dx, float dy, float dz)
 {
-    if(sticky)
-        return;
     float old_x = x, old_y = y;
     x += dx;
     y += dy;

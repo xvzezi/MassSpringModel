@@ -19,8 +19,8 @@ using namespace Eigen;
 class MS_Solver
 {
 public:
-    MS_Solver(std::vector<std::vector<MassPoint*>>& points)
-        :points(points)
+    MS_Solver(std::vector<std::vector<MassPoint*>>& points, std::vector<Spring*>& springs)
+        :points(points), springs(springs)
     {
         int rows = points.size();
         int cols = points[0].size();
@@ -41,8 +41,9 @@ public:
         this->damping_d = d;
     }
 
-    void solve_implicit_next(float time_step)
+    float solve_implicit_next(float time_step)
     {
+        float timer = glfwGetTime();
         int rows = points.size();
         int cols = points[0].size();
         for(int row = 0; row < rows; row++)
@@ -56,6 +57,102 @@ public:
             }
         }
         // apply all the delta at once
+        apply_deltas();
+        return glfwGetTime() - timer;
+    }
+
+    float solve_explicit_next(float time_step)
+    {
+        float timer = glfwGetTime();
+        int rows = points.size();
+        int cols = points[0].size();
+        for(int row = 0; row < rows; row++)
+        {
+            for(int col = 0; col < cols; col++)
+            {
+                MassPoint* p = points[row][col];
+                if(p->selected || p->sticky)
+                    continue;
+                solve_point_explicit(p, time_step, deltas[row][col]);
+            }
+        }
+        // apply all the delta at once
+        apply_deltas();
+        return glfwGetTime() - timer;
+    }
+
+    float solve_mix_next(float time_step)
+    {
+        float timer = glfwGetTime();
+        int rows = points.size();
+        int cols = points[0].size();
+        for(int row = 0; row < rows; row++)
+        {
+            for(int col = 0; col < cols; col++)
+            {
+                MassPoint* p = points[row][col];
+                if(p->selected || p->sticky)
+                    continue;
+                Vector4f im_matrix, ex_matrix;
+                solve_point_implicit(p, time_step, im_matrix);
+                solve_point_explicit(p, time_step, ex_matrix);
+                deltas[row][col] = im_matrix / 2 + ex_matrix / 2;
+            }
+        }
+        // apply all the delta at once
+        apply_deltas();
+        return glfwGetTime() - timer;
+    }
+
+    float compute_system_energy()
+    {
+        float total = 0;
+        for(auto line : points)
+        {
+            for(auto p : line)
+            {
+                total += p->calculate_energy(gravity);
+            }
+        }
+        for(auto s : springs)
+        {
+            total += s->calculate_energy(spring_k);
+        }
+        return total;
+    }
+
+    float compute_system_chaos()
+    {
+        float cx = 0;
+        float cy = 0;
+        int amount = points.size() * points[0].size();
+        for(auto line : points)
+        {
+            for(auto p : line)
+            {
+                cx += p->x;
+                cy += p->y;
+            }
+        }
+        cx /= amount;
+        cy /= amount;
+        float chaos = 0;
+        for(auto line : points)
+        {
+            for(auto p : line)
+            {
+                chaos += p->calculate_abs_dis_square(cx, cy);
+            }
+        }
+        chaos /= (amount - 1);
+        return chaos;
+    }
+private:
+
+    void apply_deltas()
+    {
+        int rows = points.size();
+        int cols = points[0].size();
         for(int row = 0; row < rows; row++)
         {
             for(int col = 0; col < cols; col++)
@@ -70,9 +167,7 @@ public:
                 p->vy += delta(3);
             }
         }
-    };
-
-private:
+    }
 
     void solve_point_implicit(MassPoint* tar, float time_step, Vector4f& out_delta)
     {
@@ -110,8 +205,29 @@ private:
         // std::cout << right << std::endl;
         // std::cout << "-----------" << std::endl;
     }
+    void solve_point_explicit(MassPoint* tar, float time_step, Vector4f& out_delta)
+    {
+        // 总体上，我们需要求得所有的力，并且分解到x,y方向上
+        // 获得弹簧力
+        float spring_x, spring_y;
+        tar->calculate_force(spring_k, spring_x, spring_y);
+        // 获得damping力
+        float dam_x = - tar->vx * damping_d;
+        float dam_y = - tar->vy * damping_d;
+        // 当前总加速度
+        float acc_x = (spring_x + dam_x) / tar->mass;
+        float acc_y = (spring_y + dam_y) / tar->mass - gravity;
+
+
+        float dvx = acc_x * time_step;
+        float dvy = acc_y * time_step;
+        float dx = tar->vx * time_step;
+        float dy = tar->vy * time_step;
+        out_delta << dx, dy, dvx, dvy;
+    }
 
     std::vector<std::vector<MassPoint*>>& points;
+    std::vector<Spring*>& springs;
     std::vector<std::vector<Vector4f, Eigen::aligned_allocator<Vector4f>>> deltas;
     float gravity = 0;
     float spring_k = 0;

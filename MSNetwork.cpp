@@ -6,6 +6,7 @@
 
 /**************************************************************************/
 /*       Network       */
+int MS_Network::file_counter = 0;
 void MS_Network::generateNetwork(int rows, int cols, float rest_len, float mass, QX_Object *prim, QX_World* world) {
     prim->enable();
     std::stringstream ss;
@@ -23,7 +24,8 @@ void MS_Network::generateNetwork(int rows, int cols, float rest_len, float mass,
         {
             ss << row << ',' << col;
             MassPoint* mp = new MassPoint("n"+ss.str(), mass, prim, 0, 1, 0, 1);
-            mp->x = cur_x; mp->y = cur_y;
+            // mp->x = cur_x; mp->y = cur_y;
+            mp->set_init_loc(cur_x, cur_y);
             world->add_object(mp);
             ss.str("");
             points[row].push_back(mp);

@@ -27,6 +27,13 @@ public:
         this->mass = mass;
     }
 
+    void set_init_loc(float x, float y)
+    {
+        original_y = y;
+        this->x = x;
+        this->y = y;
+    }
+
     void add_spring(Spring* spring)
     {
         if(spring)
@@ -38,6 +45,19 @@ public:
     }
 
     void calculate_force(float spring_k, float& out_f_x, float& out_f_y);
+    float calculate_energy(const float& gravity)
+    {
+        float v2 = vx * vx + vy * vy;
+        float motion_e = mass * v2 / 2;
+        float grad_e = gravity * (y - original_y);
+        return motion_e + grad_e;
+    }
+    float calculate_abs_dis_square(float _x, float _y)
+    {
+        float delta_x = _x - x;
+        float delta_y = _y - y;
+        return delta_x * delta_x + delta_y * delta_y;
+    }
     int get_spring_amount()
     {
         return springs.size();
@@ -47,14 +67,11 @@ public:
     /** Mouse Event */
     void mouse_select_callback(int button)
     {
-        if(sticky)
-            return;
         selected = true;
+        vx = vy = 0;
     }
     void mouse_release_callback(int button)
     {
-        if(sticky)
-            return;
         selected = false;
     }
     void mouse_drag_callback(int button, float dx, float dy, float dz);
@@ -76,6 +93,7 @@ public:
     std::vector<Spring*> springs;
     bool sticky = false;
     // Location indicator
+    float original_y;
     float x, y;
     float vx, vy;
     float mass;
@@ -102,6 +120,16 @@ public:
         };
         init(name, vertices, colors, nullptr, 2, GL_DYNAMIC_DRAW, eles, 2);
         this->rest_len = rest_len;
+    }
+
+    float calculate_energy(const float& spring_k)
+    {
+        float dx = second->x - first->x;
+        float dy = second->y - first->y;
+        float dis2 = dx * dx + dy * dy;
+        float dis = sqrtf(dis2);
+        float delta_x = dis - rest_len;
+        return spring_k * delta_x * delta_x / 2;
     }
 
     void connect_left_right(MassPoint* left, MassPoint* right)
